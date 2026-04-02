@@ -1,0 +1,16 @@
+@model SalesTrackAcademy.Models.ViewModels.AgentProgressVm
+@{
+    ViewData["Title"] = "Agent Detail";
+}
+
+<section class="page-head">
+    <h1>@Model.AgentName</h1>
+    <p>@Model.AgentEmail</p>
+</section>
+
+<div class="stats-grid">
+    <article class="metric-card"><span>Assigned Courses</span><strong>@Model.AssignedCourses</strong></article>
+    <article class="metric-card"><span>Completed Courses</span><strong>@Model.CompletedCourses</strong></article>
+    <article class="metric-card"><span>Completion</span><strong>@Model.CompletionPercent%</strong></article>
+    <article class="metric-card"><span>Best Quiz</span><strong>@Model.BestQuizScore%</strong></article>
+</div>

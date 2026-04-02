@@ -1,0 +1,34 @@
+@model SalesTrackAcademy.Models.ViewModels.CourseEditVm
+@{
+    ViewData["Title"] = "Edit Course";
+}
+
+<section class="page-head">
+    <h1>Edit Course</h1>
+    <p>Keep training content fresh and aligned with your playbook.</p>
+</section>
+
+<section class="card-surface form-shell">
+    <form asp-action="EditCourse" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ThumbnailUrl" class="form-label"></label>
+            <input asp-for="ThumbnailUrl" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

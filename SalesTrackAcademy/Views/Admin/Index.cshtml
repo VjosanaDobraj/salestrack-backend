@@ -1,0 +1,155 @@
+@model SalesTrackAcademy.Models.ViewModels.AdminDashboardVm
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    var labels = Model.AgentProgress.Select(x => x.AgentName).ToList();
+    var completion = Model.AgentProgress.Select(x => x.CompletionPercent).ToList();
+    var quiz = Model.AgentProgress.Select(x => x.BestQuizScore).ToList();
+}
+
+<section class="page-head">
+    <h1><i class="bi bi-clipboard2-pulse me-2"></i>Creator Dashboard</h1>
+    <p>Monitor completion, quiz performance, and engagement across the sales organization.</p>
+</section>
+
+<div class="stats-grid">
+    <article class="metric-card metric-icon">
+        <i class="bi bi-journal-richtext"></i>
+        <span>Total Courses</span>
+        <strong>@Model.TotalCourses</strong>
+    </article>
+    <article class="metric-card metric-icon">
+        <i class="bi bi-people"></i>
+        <span>Total Agents</span>
+        <strong>@Model.TotalAgents</strong>
+    </article>
+    <article class="metric-card metric-icon">
+        <i class="bi bi-graph-up-arrow"></i>
+        <span>Avg Completion</span>
+        <strong>@Model.AvgCompletionRate%</strong>
+    </article>
+    <article class="metric-card metric-icon">
+        <i class="bi bi-award"></i>
+        <span>Avg Quiz Score</span>
+        <strong>@Model.AvgQuizScore%</strong>
+    </article>
+    <article class="metric-card metric-icon">
+        <i class="bi bi-chat-left-dots"></i>
+        <span>Comments Posted</span>
+        <strong>@Model.TotalComments</strong>
+    </article>
+</div>
+
+<div class="row g-4 mt-1">
+    <div class="col-lg-8">
+        <section class="card-surface h-100">
+            <h2 class="h4">Agent Completion Snapshot</h2>
+            <canvas id="completionChart" height="110"></canvas>
+        </section>
+    </div>
+    <div class="col-lg-4">
+        <section class="card-surface h-100">
+            <h2 class="h4">Learning Health</h2>
+            <canvas id="healthChart" height="170"></canvas>
+        </section>
+    </div>
+</div>
+
+<section class="card-surface mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Individual Agent Progress</h2>
+        <a asp-action="Courses" class="btn btn-primary">Manage Courses</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Agent</th>
+                    <th>Assigned</th>
+                    <th>Completed</th>
+                    <th>Progress</th>
+                    <th>Best Quiz</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var agent in Model.AgentProgress)
+            {
+                <tr>
+                    <td>
+                        <div class="fw-semibold">@agent.AgentName</div>
+                        <small class="text-muted">@agent.AgentEmail</small>
+                    </td>
+                    <td>@agent.AssignedCourses</td>
+                    <td>@agent.CompletedCourses</td>
+                    <td>
+                        <div class="tiny-progress">
+                            <div class="tiny-progress-bar" style="width:@agent.CompletionPercent%"></div>
+                        </div>
+                        <small>@agent.CompletionPercent%</small>
+                    </td>
+                    <td>@agent.BestQuizScore%</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</section>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+    (() => {
+        const labels = @Html.Raw(JsonSerializer.Serialize(labels));
+        const completionData = @Html.Raw(JsonSerializer.Serialize(completion));
+        const quizData = @Html.Raw(JsonSerializer.Serialize(quiz));
+
+        const completionCanvas = document.getElementById("completionChart");
+        if (completionCanvas) {
+            new Chart(completionCanvas, {
+                type: "bar",
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: "Completion %",
+                            data: completionData,
+                            borderRadius: 8,
+                            backgroundColor: "rgba(3, 105, 161, 0.8)"
+                        },
+                        {
+                            label: "Best Quiz %",
+                            data: quizData,
+                            borderRadius: 8,
+                            backgroundColor: "rgba(5, 150, 105, 0.75)"
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true, max: 100 }
+                    },
+                    plugins: { legend: { position: "bottom" } }
+                }
+            });
+        }
+
+        const healthCanvas = document.getElementById("healthChart");
+        if (healthCanvas) {
+            new Chart(healthCanvas, {
+                type: "doughnut",
+                data: {
+                    labels: ["Avg Completion", "Avg Quiz Score", "Engagement Index"],
+                    datasets: [{
+                        data: [@Model.AvgCompletionRate, @Model.AvgQuizScore, @Math.Min(100, Model.TotalComments * 5)],
+                        backgroundColor: ["#0369a1", "#059669", "#f59e0b"]
+                    }]
+                },
+                options: {
+                    plugins: { legend: { position: "bottom" } }
+                }
+            });
+        }
+    })();
+</script>
+}

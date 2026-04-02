@@ -1,0 +1,33 @@
+@model SalesTrackAcademy.Models.ViewModels.CourseEditVm
+@{
+    ViewData["Title"] = "Create Course";
+}
+
+<section class="page-head">
+    <h1>Create Course</h1>
+    <p>Define title, summary, and visual identity before adding lessons.</p>
+</section>
+
+<section class="card-surface form-shell">
+    <form asp-action="CreateCourse" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ThumbnailUrl" class="form-label"></label>
+            <input asp-for="ThumbnailUrl" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Save and Build</button>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

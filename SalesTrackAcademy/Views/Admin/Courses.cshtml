@@ -1,0 +1,40 @@
+@model List<SalesTrackAcademy.Models.Course>
+@{
+    ViewData["Title"] = "Course Management";
+}
+
+<section class="page-head">
+    <h1><i class="bi bi-stack me-2"></i>Course Builder</h1>
+    <p>Create and maintain multimedia training paths for every sales role.</p>
+</section>
+
+<div class="builder-toolbar mb-3">
+    <div class="builder-summary">
+        <strong>@Model.Count</strong>
+        <span>active course(s)</span>
+    </div>
+    <a asp-action="CreateCourse" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i>New Course</a>
+</div>
+
+<div class="row g-3">
+@foreach (var course in Model)
+{
+    <div class="col-md-6 col-xl-4">
+        <article class="course-card course-card-v2">
+            <img src="@(string.IsNullOrWhiteSpace(course.ThumbnailUrl) ? "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=900&q=80" : course.ThumbnailUrl)" alt="@course.Title" />
+            <div class="content">
+                <h3>@course.Title</h3>
+                <p>@course.Description</p>
+                <div class="course-chip-row">
+                    <span class="course-chip"><i class="bi bi-journal me-1"></i>@course.Lessons.Count lesson(s)</span>
+                    <span class="course-chip"><i class="bi bi-calendar3 me-1"></i>@course.CreatedAtUtc.ToLocalTime().ToString("dd MMM")</span>
+                </div>
+                <div class="actions">
+                    <a asp-action="CourseBuilder" asp-route-id="@course.Id" class="btn btn-sm btn-dark">Open Builder</a>
+                    <a asp-action="EditCourse" asp-route-id="@course.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                </div>
+            </div>
+        </article>
+    </div>
+}
+</div>

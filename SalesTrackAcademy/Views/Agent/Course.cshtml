@@ -1,0 +1,27 @@
+@model SalesTrackAcademy.Models.Course
+@{
+    ViewData["Title"] = Model.Title;
+    var progressMap = ViewBag.Progress as Dictionary<int, bool> ?? new Dictionary<int, bool>();
+}
+
+<section class="page-head">
+    <h1>@Model.Title</h1>
+    <p>@Model.Description</p>
+</section>
+
+<section class="card-surface">
+    <h2>Lessons</h2>
+    <div class="list-group list-group-flush">
+        @foreach (var lesson in Model.Lessons.OrderBy(x => x.SortOrder))
+        {
+            var done = progressMap.TryGetValue(lesson.Id, out var completed) && completed;
+            <a asp-action="Lesson" asp-route-id="@lesson.Id" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>@lesson.Title</strong>
+                    <div class="small text-muted">@lesson.LessonType</div>
+                </div>
+                <span class="badge @(done ? "text-bg-success" : "text-bg-secondary")">@(done ? "Completed" : "In Progress")</span>
+            </a>
+        }
+    </div>
+</section>
